@@ -4,7 +4,7 @@
 
 #![allow(non_upper_case_globals, non_snake_case)]
 
-use std::ffi::{c_char, c_int};
+use std::ffi::{c_char, c_int, c_uint};
 use std::ptr;
 
 use super::d_mode;
@@ -24,7 +24,7 @@ pub static mut gamedescription: *mut c_char = ptr::null_mut();
 
 // Set if homebrew PWAD stuff has been added.
 #[no_mangle]
-pub static mut modifiedgame: c_int = 0;
+pub static mut modifiedgame: c_uint = 0;
 
 #[cfg(test)]
 mod tests {

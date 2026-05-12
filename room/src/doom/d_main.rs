@@ -1578,7 +1578,7 @@ pub extern "C" fn D_DoomMain() {
         }
 
         // Load PWAD files
-        modifiedgame = W_ParseCommandLine();
+        modifiedgame = W_ParseCommandLine() as c_uint;
 
         // Check for -playdemo / -timedemo
         let p = M_CheckParmWithArgs(b"-playdemo\0".as_ptr() as *const c_char, 1);
