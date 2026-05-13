@@ -5,7 +5,7 @@
 
 #![allow(non_upper_case_globals, non_snake_case, non_camel_case_types)]
 
-use std::ffi::{c_char, c_int, c_short, c_void};
+use std::ffi::{c_char, c_int, c_short, c_uint, c_void};
 use std::ptr;
 
 use crate::doom::c_ffi::{
@@ -126,7 +126,7 @@ extern "C" {
     static mut spritetopoffset: *mut c_int;
 
     static mut lumpinfo: *mut lumpinfo_t;
-    static mut modifiedgame: c_int;
+    static mut modifiedgame: c_uint;
 }
 
 // ---------------------------------------------------------------------------
