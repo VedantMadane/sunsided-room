@@ -126,7 +126,7 @@ extern "C" {
     static mut spritetopoffset: *mut c_int;
 
     static mut lumpinfo: *mut lumpinfo_t;
-    static mut modifiedgame: c_uint;
+    static mut modifiedgame: c_uint; // boolean: whether any WAD files were loaded
 }
 
 // ---------------------------------------------------------------------------
