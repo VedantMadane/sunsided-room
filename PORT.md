@@ -16,18 +16,12 @@ The ported code must be validated against the unit tests, as well as the `demo_p
 
 | Metric | Value |
 |--------|------:|
-| Remaining C modules | 1 |
-| Total remaining LoC | ~2,303 |
-| Already ported LoC | ~53,355 (est.) |
-| Port completeness | ~95.9% (by line count) |
+| Remaining C modules | 0 |
+| Total remaining LoC | 0 |
+| Already ported LoC | ~55,658 (est.) |
+| Port completeness | **100%** |
 
-## Unported Modules by Complexity
-
-### Very Large — > 1,500 LoC (1 file, 2,303 LoC)
-
-| File | Lines | Category | Porting notes |
-|------|------:|----------|---------------|
-| `g_game.c` | 2,303 | Game logic | Core game loop, input, demo recording, save/load, game-state globals (movement tables, ticcmd). Last remaining C module. |
+All C modules have been ported to Rust. The remaining C code in `doomgeneric-sys/` consists of the platform-agnostic `doomgeneric` frontend (`doomgeneric.c`) and a few small system-level stubs (`i_timer.c`, `i_video.c`) that are intentionally left as C glue between the engine and the operating system.
 
 ## Recommended Porting Order
 
@@ -56,21 +50,16 @@ With only 1 module left, every dependency is already Rust-native.
    layout work. Now fully ported to Rust (`room/src/doom/p_saveg.rs`).~~
 9. ~~**Main orchestrator** — `d_main.c`. The main initialization and game loop
    entry point. Now fully ported to Rust (`room/src/doom/d_main.rs`).~~
-10. **Game logic last** — `g_game.c`. The last remaining C module. All of its
-    dependencies (`doomstat`, `d_net`, `d_loop`, `d_player`, `p_setup`,
-    `p_tick`, `p_saveg`, `p_mobj`, `m_argv`, `m_random`, `m_misc`, `m_menu`,
-    `m_controls`, `i_system`, `i_timer`, `i_sound`, `i_video`, `z_zone`,
-    `w_wad`, `s_sound`, `am_map`, `hu_stuff`, `st_stuff`, `wi_stuff`,
-    `f_finale`, `f_wipe`, `r_main`, `v_video`, `statdump`) are now
-    Rust-native.
+10. ~~**Game logic last** — `g_game.c`. The last remaining C module. Now fully
+    ported to Rust (`room/src/doom/g_game.rs`).~~
 
 ## Porting Strategy Notes
 
-- **Variadic functions**: Stable Rust cannot define C variadic functions. The
-  only remaining C caller (`g_game.c`) uses `M_snprintf` which is redirected
-  via a macro in `m_misc.h` to the non-variadic Rust helper
-  `M_snprintf_clamp`. Once `g_game.c` is ported, this macro becomes
-  unnecessary and can be removed from `m_misc.h`.
+- **Variadic functions**: Stable Rust cannot define C variadic functions. All
+  engine modules that previously relied on `M_snprintf` have been ported to
+  Rust, where `M_snprintf_clamp` (a non-variadic Rust helper) is used
+  instead. The macro redirection in `m_misc.h` can now be removed if the
+  remaining C glue no longer needs it.
 - **`d_net.c` is already ported**: Since `FEATURE_MULTIPLAYER` is not
   defined, the original module contained only stubs; the Rust replacement
   (`room/src/doom/d_net.rs`) is already active.

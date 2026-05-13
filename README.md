@@ -24,10 +24,11 @@ strategy:
    already pure Rust, built on [winit](https://github.com/rust-windowing/winit)
    and [wgpu](https://github.com/gfx-rs/wgpu).
 
-This means the executable is a **mixed C/Rust binary**: some subsystems (e.g.
-`r_draw`, `p_setup`, `z_zone`) are now native Rust, while others (e.g.
-`g_game`, `d_main`) still run the original C code.  As each module
-is ported it is removed from `build.rs` and the C file is no longer linked.
+This means the executable is a **mixed C/Rust binary**: the vast majority of
+engine subsystems (e.g. `r_draw`, `p_setup`, `z_zone`, `g_game`, `d_main`) are
+now native Rust. Only a thin layer of C glue (`doomgeneric.c`, `i_timer.c`,
+`i_video.c`) remains in `doomgeneric-sys/build.rs`. As each module is ported it
+is removed from `build.rs` and the C file is no longer linked.
 
 A regression-test harness (`room/src/doom/c_tests/`) runs the original C
 functions alongside their Rust replacements to verify bit-for-bit behavioural
@@ -127,7 +128,7 @@ recommended porting order.
 - [x] `d_items.c`
 - [x] `d_iwad.c`
 - [x] `d_loop.c`
-- [ ] `d_main.c`
+- [x] `d_main.c`
 - [x] `d_mode.c`
 - [x] `d_net.c`
 - [x] `doomdef.c`
@@ -138,7 +139,7 @@ recommended porting order.
 
 ### Game logic (`g_*`, `p_*`)
 
-- [ ] `g_game.c`
+- [x] `g_game.c`
 - [x] `p_ceilng.c`
 - [x] `p_doors.c`
 - [x] `p_enemy.c`
@@ -150,10 +151,10 @@ recommended porting order.
 - [x] `p_mobj.c`
 - [x] `p_plats.c`
 - [x] `p_pspr.c`
-- [ ] `p_saveg.c`
+- [x] `p_saveg.c`
 - [x] `p_setup.c`
 - [x] `p_sight.c`
-- [ ] `p_spec.c`
+- [x] `p_spec.c`
 - [x] `p_switch.c`
 - [x] `p_telept.c`
 - [x] `p_tick.c`
@@ -202,7 +203,7 @@ recommended porting order.
 - [x] `i_endoom.c`
 - [x] `i_input.c`
 - [x] `i_joystick.c`
-- [ ] `i_scale.c`
+- [x] `i_scale.c`
 - [x] `i_sound.c`
 - [x] `i_system.c`
 - [x] `i_timer.c`
