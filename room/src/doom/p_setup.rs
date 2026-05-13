@@ -11,6 +11,7 @@ use std::ptr;
 use crate::doom::c_ffi::{line_t, node_t, sector_t, seg_t, side_t, subsector_t, vertex_t};
 use crate::doom::d_mode;
 use crate::doom::d_player::{consoleplayer, players, MAXPLAYERS};
+use crate::doom::g_game::{bodyqueslot, precache, totalitems, totalkills, totalsecret};
 use crate::doom::info::sprnames;
 use crate::doom::m_bbox::{M_AddToBox, M_ClearBox};
 use crate::doom::p_tick::{leveltime, P_InitThinkers};
@@ -290,12 +291,6 @@ extern "C" {
     static mut deathmatch: c_int;
     static mut playeringame: [c_int; MAXPLAYERS];
 
-    static mut totalkills: c_int;
-    static mut totalitems: c_int;
-    static mut totalsecret: c_int;
-
-    static mut precache: c_int;
-    static mut bodyqueslot: c_int;
     static mut iquehead: c_int;
     static mut iquetail: c_int;
 
