@@ -702,29 +702,113 @@ fn demo_playthrough() {
 
     let mut snapshots: Vec<Snapshot> = Vec::new();
 
+    // Validate a single snapshot against the baseline, failing fast.
+    fn validate_snapshot(i: usize, got: &Snapshot, expected: &Snapshot) {
+        let n = i + 1; // 1-indexed for human-readable error messages
+        assert_eq!(got.tic, expected.tic, "checkpoint {}: tic mismatch", n);
+        assert_eq!(
+            got.virtual_ms, expected.virtual_ms,
+            "checkpoint {}: virtual_ms mismatch",
+            n
+        );
+        assert_eq!(
+            got.gametic, expected.gametic,
+            "checkpoint {}: gametic mismatch",
+            n
+        );
+        assert_eq!(
+            got.gamestate, expected.gamestate,
+            "checkpoint {}: gamestate mismatch",
+            n
+        );
+        assert_eq!(
+            got.rndindex, expected.rndindex,
+            "checkpoint {}: rndindex mismatch",
+            n
+        );
+        assert_eq!(
+            got.prndindex, expected.prndindex,
+            "checkpoint {}: prndindex mismatch",
+            n
+        );
+        assert_eq!(
+            got.health, expected.health,
+            "checkpoint {}: health mismatch",
+            n
+        );
+        assert_eq!(
+            got.armorpoints, expected.armorpoints,
+            "checkpoint {}: armorpoints mismatch",
+            n
+        );
+        assert_eq!(
+            got.killcount, expected.killcount,
+            "checkpoint {}: killcount mismatch",
+            n
+        );
+        assert_eq!(
+            got.itemcount, expected.itemcount,
+            "checkpoint {}: itemcount mismatch",
+            n
+        );
+        assert_eq!(
+            got.secretcount, expected.secretcount,
+            "checkpoint {}: secretcount mismatch",
+            n
+        );
+        assert_eq!(
+            got.readyweapon, expected.readyweapon,
+            "checkpoint {}: readyweapon mismatch",
+            n
+        );
+        assert_eq!(got.ammo, expected.ammo, "checkpoint {}: ammo mismatch", n);
+        assert_eq!(got.mo_x, expected.mo_x, "checkpoint {}: mo_x mismatch", n);
+        assert_eq!(got.mo_y, expected.mo_y, "checkpoint {}: mo_y mismatch", n);
+        assert_eq!(got.mo_z, expected.mo_z, "checkpoint {}: mo_z mismatch", n);
+        assert_eq!(
+            got.mo_angle, expected.mo_angle,
+            "checkpoint {}: mo_angle mismatch",
+            n
+        );
+    }
+
+    let bless = std::env::var("BLESS").is_ok();
+
     // Drive the engine for TOTAL_TICS ticks.
-    eprintln!("demo_playthrough: {} checkpoints, {} total tics", CHECKPOINTS.len(), TOTAL_TICS);
+    eprintln!(
+        "demo_playthrough: {} checkpoints, {} total tics",
+        CHECKPOINTS.len(),
+        TOTAL_TICS
+    );
     for tic in 0..TOTAL_TICS {
         unsafe {
             doomgeneric_sys::doomgeneric_Tick();
         }
 
         if is_checkpoint(tic + 1) {
-            let checkpoint_idx = snapshots.len() + 1;
-            let pct = (checkpoint_idx * 100) / CHECKPOINTS.len();
+            let checkpoint_idx = snapshots.len();
+            let pct = ((checkpoint_idx + 1) * 100) / CHECKPOINTS.len();
             eprintln!(
                 "  checkpoint {}/{} ({}%) at tic {}",
-                checkpoint_idx,
+                checkpoint_idx + 1,
                 CHECKPOINTS.len(),
                 pct,
                 tic + 1,
             );
-            snapshots.push(capture_snapshot(tic + 1));
+            let snap = capture_snapshot(tic + 1);
+            if !bless {
+                assert!(
+                    checkpoint_idx < BASELINE.len(),
+                    "checkpoint {}: no baseline entry (got {} snapshots, baseline has {})",
+                    checkpoint_idx,
+                    checkpoint_idx + 1,
+                    BASELINE.len(),
+                );
+                validate_snapshot(checkpoint_idx, &snap, &BASELINE[checkpoint_idx]);
+            }
+            snapshots.push(snap);
         }
     }
-
-    // BLESS mode or compare mode.
-    let bless = std::env::var("BLESS").is_ok();
 
     if bless {
         println!("/* BLESS output — paste into BASELINE */");
