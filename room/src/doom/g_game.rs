@@ -21,6 +21,9 @@ use crate::doom::c_ffi::{
     ANG45, ANGLETOFINESHIFT, BODYQUESIZE, FINEANGLES, FRACBITS, FRACUNIT, SLOWTURNTICS, TICRATE,
     TURBOTHRESHOLD,
 };
+use crate::doom::info::{
+    mobjinfo, states, MT_BRUISERSHOT, MT_HEADSHOT, MT_TROOPSHOT, S_SARG_PAIN2, S_SARG_RUN1,
+};
 
 const ev_keydown: c_int = 0;
 const ev_keyup: c_int = 1;
@@ -40,7 +43,6 @@ use crate::doom::m_controls::{
     key_weapon7, key_weapon8, mousebbackward, mousebfire, mousebforward, mousebnextweapon,
     mousebprevweapon, mousebstrafe, mousebstrafeleft, mousebstraferight, mousebuse,
 };
-use crate::doom::m_misc::M_snprintf_clamp;
 use crate::doom::p_saveg::{save_stream, savegame_error};
 use crate::doom::wi_stuff::wbstartstruct_t;
 use crate::doom::z_zone::Z_Malloc;
@@ -305,7 +307,7 @@ pub static mut secretexit: boolean = 0;
 // ---------------------------------------------------------------------------
 
 // Weapon key array indices — these match the key_weapon1..8 variable indices
-fn weapon_key_ptr(i: usize) -> *const c_int {
+fn weapon_key_ptr(i: usize) -> *mut c_int {
     unsafe {
         match i {
             0 => &raw mut key_weapon1,
@@ -316,7 +318,7 @@ fn weapon_key_ptr(i: usize) -> *const c_int {
             5 => &raw mut key_weapon6,
             6 => &raw mut key_weapon7,
             7 => &raw mut key_weapon8,
-            _ => ptr::null(),
+            _ => unreachable!(),
         }
     }
 }
@@ -400,7 +402,6 @@ extern "C" {
     static mut finetangent: [fixed_t; FINEANGLES / 2];
 
     static mut player_names: [*mut c_char; 4];
-    static mut viewz: c_int;
     static mut leveltime: c_int;
 
     fn R_FlatNumForName(name: *const c_char) -> c_int;
@@ -1158,8 +1159,8 @@ pub unsafe extern "C" fn G_Ticker() {
                 }
                 if !(*players.as_mut_ptr().offset(i as isize)).mo.is_null() {
                     let mo = (*players.as_mut_ptr().offset(i as isize)).mo;
-                    let mo_x_ptr = mo as *const c_int;
-                    consistancy[i][buf] = *mo_x_ptr;
+                    let mo_struct = mo as *const crate::doom::c_ffi::mobj_t;
+                    consistancy[i][buf] = (*mo_struct).x;
                 } else {
                     consistancy[i][buf] = rndindex;
                 }
@@ -1255,10 +1256,8 @@ pub unsafe extern "C" fn G_PlayerFinishLevel(player: c_int) {
 
     // Clear MF_SHADOW flag (0x20) from mobj
     if !p.mo.is_null() {
-        let mobj_ptr = p.mo as *mut c_int;
-        // flags is at offset 52 in the mobj_t layout
-        let flags_ptr = mobj_ptr.add(13); // 52 / 4 = 13
-        *flags_ptr &= !0x20;
+        let mo = p.mo as *mut crate::doom::c_ffi::mobj_t;
+        (*mo).flags &= !0x20;
     }
 
     p.extralight = 0;
@@ -1337,8 +1336,9 @@ pub unsafe extern "C" fn G_CheckSpot(playernum: c_int, mthing: *mut c_void) -> b
         // First spawn of level, before corpses
         for i in 0..playernum {
             let other_mo = (*players.as_mut_ptr().offset(i as isize)).mo;
-            let other_x = *(other_mo as *const c_int);
-            let other_y = *(other_mo as *const c_int).add(1);
+            let other_mo_struct = other_mo as *const crate::doom::c_ffi::mobj_t;
+            let other_x = (*other_mo_struct).x;
+            let other_y = (*other_mo_struct).y;
             let mt = mthing as *const c_short;
             let mx = *mt.offset(0) as c_int;
             let my = *mt.offset(1) as c_int;
@@ -1415,7 +1415,8 @@ pub unsafe extern "C" fn G_CheckSpot(playernum: c_int, mthing: *mut c_void) -> b
         P_SpawnMobj(x + 20 * xa, y + 20 * ya, floorheight, MT_TFOG);
     }
 
-    if viewz != 1 {
+    let p_viewz = (*players.as_mut_ptr().offset(consoleplayer as isize)).viewz;
+    if p_viewz != 1 {
         S_StartSound(null_mut(), sfx_telept);
     }
 
@@ -1459,8 +1460,8 @@ pub unsafe extern "C" fn G_DoReborn(playernum: c_int) {
     } else {
         // Disassociate the corpse
         let mo = (*players.as_mut_ptr().offset(playernum as isize)).mo;
-        let mo_player = (mo as usize + 72) as *mut *mut c_void;
-        *mo_player = null_mut();
+        let mo = mo as *mut crate::doom::c_ffi::mobj_t;
+        (*mo).player = null_mut();
 
         if deathmatch != 0 {
             G_DeathMatchSpawnPlayer(playernum);
@@ -1636,8 +1637,8 @@ pub unsafe extern "C" fn G_WorldDone() {
     if gamemode == d_mode::commercial {
         match gamemap {
             15 | 31 => {
-                if secretexit == 0 {
-                    // do nothing
+                if secretexit != 0 {
+                    F_StartFinale();
                 }
             }
             6 | 11 | 20 | 30 => {
@@ -1734,10 +1735,14 @@ pub unsafe extern "C" fn G_DoSaveGame() {
     let temp_savegame_file = P_TempSaveGameFile();
     let savegame_file = P_SaveGameFile(savegameslot);
 
+    let mut used_recovery = false;
+    let mut recovery_savegame_file_holder: *mut c_char = null_mut();
+
     save_stream = fopen(temp_savegame_file, c"wb".as_ptr());
 
     if save_stream.is_null() {
         let recovery_savegame_file = M_TempFile(c"recovery.dsg".as_ptr() as *mut c_char);
+        recovery_savegame_file_holder = recovery_savegame_file;
         save_stream = fopen(recovery_savegame_file, c"wb".as_ptr());
         if save_stream.is_null() {
             I_Error(
@@ -1746,6 +1751,7 @@ pub unsafe extern "C" fn G_DoSaveGame() {
                 recovery_savegame_file,
             );
         }
+        used_recovery = true;
     }
 
     savegame_error = 0;
@@ -1764,6 +1770,14 @@ pub unsafe extern "C" fn G_DoSaveGame() {
     }
 
     fclose(save_stream);
+
+    if used_recovery {
+        I_Error(
+            c"Failed to open savegame file '%s' for writing.\nBut your game has been saved to '%s' for recovery.".as_ptr(),
+            temp_savegame_file,
+            recovery_savegame_file_holder,
+        );
+    }
 
     remove(savegame_file);
     rename(temp_savegame_file, savegame_file);
@@ -1859,37 +1873,19 @@ pub unsafe extern "C" fn G_InitNew(skill: skill_t, episode: c_int, map: c_int) {
 
     if fastparm != 0 || (skill == sk_nightmare && gameskill != sk_nightmare) {
         // Speed up states S_SARG_RUN1..S_SARG_PAIN2
-        extern "C" {
-            static mut states: *mut c_void;
-            static mut mobjinfo: *mut c_void;
+        for i in S_SARG_RUN1..=S_SARG_PAIN2 {
+            states[i as usize].tics >>= 1;
         }
-        let states_ptr = states as *mut c_int;
-        for i in 0..6 {
-            // Each state is 4 ints (function ptr counts as 2 on 64-bit, but we use c_int stride)
-            // Actually tics is at offset 8 (2 c_ints in), so stride is 4 for a state_t
-            let state_tics_ptr = states_ptr.add(i * 4 + 2);
-            *state_tics_ptr >>= 1;
-        }
-        let mobjinfo_ptr = mobjinfo as *mut c_int;
-        // MT_BRUISERSHOT = index 46, MT_HEADSHOT = 40, MT_TROOPSHOT = 29
-        // speed field offset is 4 ints in (after type, spawnstate, etc.)
-        *(mobjinfo_ptr.add(46 * 4 + 4)) = 20 * FRACUNIT;
-        *(mobjinfo_ptr.add(40 * 4 + 4)) = 20 * FRACUNIT;
-        *(mobjinfo_ptr.add(29 * 4 + 4)) = 20 * FRACUNIT;
+        mobjinfo[MT_BRUISERSHOT as usize].speed = 20 * FRACUNIT;
+        mobjinfo[MT_HEADSHOT as usize].speed = 20 * FRACUNIT;
+        mobjinfo[MT_TROOPSHOT as usize].speed = 20 * FRACUNIT;
     } else if skill != sk_nightmare && gameskill == sk_nightmare {
-        extern "C" {
-            static mut states: *mut c_void;
-            static mut mobjinfo: *mut c_void;
+        for i in S_SARG_RUN1..=S_SARG_PAIN2 {
+            states[i as usize].tics <<= 1;
         }
-        let states_ptr = states as *mut c_int;
-        for i in 0..6 {
-            let state_tics_ptr = states_ptr.add(i * 4 + 2);
-            *state_tics_ptr <<= 1;
-        }
-        let mobjinfo_ptr = mobjinfo as *mut c_int;
-        *(mobjinfo_ptr.add(46 * 4 + 4)) = 15 * FRACUNIT;
-        *(mobjinfo_ptr.add(40 * 4 + 4)) = 10 * FRACUNIT;
-        *(mobjinfo_ptr.add(29 * 4 + 4)) = 10 * FRACUNIT;
+        mobjinfo[MT_BRUISERSHOT as usize].speed = 15 * FRACUNIT;
+        mobjinfo[MT_HEADSHOT as usize].speed = 10 * FRACUNIT;
+        mobjinfo[MT_TROOPSHOT as usize].speed = 10 * FRACUNIT;
     }
 
     for i in 0..MAXPLAYERS {
@@ -2150,6 +2146,7 @@ pub unsafe extern "C" fn G_DoPlayDemo() {
             G_VanillaVersionCode(),
             DemoVersionDescription(demoversion),
         );
+        return;
     }
 
     skill = *demo_p as c_int;
