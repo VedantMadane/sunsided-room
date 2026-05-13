@@ -703,12 +703,22 @@ fn demo_playthrough() {
     let mut snapshots: Vec<Snapshot> = Vec::new();
 
     // Drive the engine for TOTAL_TICS ticks.
+    eprintln!("demo_playthrough: {} checkpoints, {} total tics", CHECKPOINTS.len(), TOTAL_TICS);
     for tic in 0..TOTAL_TICS {
         unsafe {
             doomgeneric_sys::doomgeneric_Tick();
         }
 
         if is_checkpoint(tic + 1) {
+            let checkpoint_idx = snapshots.len() + 1;
+            let pct = (checkpoint_idx * 100) / CHECKPOINTS.len();
+            eprintln!(
+                "  checkpoint {}/{} ({}%) at tic {}",
+                checkpoint_idx,
+                CHECKPOINTS.len(),
+                pct,
+                tic + 1,
+            );
             snapshots.push(capture_snapshot(tic + 1));
         }
     }
