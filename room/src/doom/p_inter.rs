@@ -805,13 +805,13 @@ pub unsafe extern "C" fn P_DamageMobj(
     source: *mut mobj_t,
     mut damage: c_int,
 ) {
-    if (*target).flags & MF_SHOOTABLE == 0 {
+    if ((*target).flags & MF_SHOOTABLE) == 0 {
         return;
     }
     if (*target).health <= 0 {
         return;
     }
-    if (*target).flags & MF_SKULLFLY != 0 {
+    if ((*target).flags & MF_SKULLFLY) != 0 {
         (*target).momx = 0;
         (*target).momy = 0;
         (*target).momz = 0;
@@ -823,7 +823,7 @@ pub unsafe extern "C" fn P_DamageMobj(
     }
 
     if !inflictor.is_null()
-        && (*target).flags & MF_NOCLIP == 0
+        && ((*target).flags & MF_NOCLIP) == 0
         && (source.is_null()
             || (*source).player.is_null()
             || (*((*source).player as *mut PlayerT)).readyweapon != wp_chainsaw)
@@ -894,7 +894,7 @@ pub unsafe extern "C" fn P_DamageMobj(
     }
 
     let info = (*target).info as *mut MobjInfo;
-    if P_Random() < (*info).painchance && (*target).flags & MF_SKULLFLY == 0 {
+    if P_Random() < (*info).painchance && ((*target).flags & MF_SKULLFLY) == 0 {
         (*target).flags |= MF_JUSTHIT;
         P_SetMobjState(target, (*info).painstate);
     }

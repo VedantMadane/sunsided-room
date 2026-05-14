@@ -871,9 +871,24 @@ fn demo_playthrough() {
         CHECKPOINTS.len(),
         TOTAL_TICS
     );
+    let trace_prnd = std::env::var("TRACE_PRND").is_ok();
+    let mut last_prndindex: c_int = 0;
+
     for tic in 0..TOTAL_TICS {
         unsafe {
             doomgeneric_sys::doomgeneric_Tick();
+        }
+
+        // Tic-by-tic prndindex trace for the critical window
+        if trace_prnd {
+            let current_prndindex;
+            unsafe {
+                current_prndindex = prndindex;
+            }
+            if current_prndindex != last_prndindex {
+                eprintln!("  tic {}: prndindex {} (delta {})", tic + 1, current_prndindex, current_prndindex - last_prndindex);
+                last_prndindex = current_prndindex;
+            }
         }
 
         if is_checkpoint(tic + 1) {
