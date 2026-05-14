@@ -22,7 +22,6 @@ pub mod dstrings;
 pub mod dummy;
 pub mod f_finale;
 pub mod f_wipe;
-pub mod g_game;
 pub mod hu_lib;
 pub mod hu_stuff;
 pub mod i_cdmus;

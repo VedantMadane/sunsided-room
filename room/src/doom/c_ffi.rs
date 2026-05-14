@@ -364,16 +364,40 @@ pub struct spriteframe_t {
 }
 
 // ---------------------------------------------------------------------------
-// g_game.rs — movement tables and game-state globals.
+// g_game.c — movement tables and game-state globals.
 // forwardmove / sidemove / angleturn are static initialisers (non-zero).
-// These are now ported to Rust and re-exported here for backward compat.
 // ---------------------------------------------------------------------------
 
-pub use crate::doom::g_game::{
-    angleturn, bodyqueslot, cpars, forwardmove, levelstarttic, pars, precache, sidemove,
-    testcontrols, testcontrols_mousespeed, totalitems, totalkills, totalsecret, vanilla_demo_limit,
-    vanilla_savegame_limit,
-};
+extern "C" {
+    /// Forward movement speed table: [slow, fast] (fixed_t, unit/tic).
+    /// Values: {0x19, 0x32} = {25, 50}.
+    pub static mut forwardmove: [c_int; 2];
+    /// Lateral (strafe) movement speed table: [slow, fast] (fixed_t, unit/tic).
+    /// Values: {0x18, 0x28} = {24, 40}.
+    pub static mut sidemove: [c_int; 2];
+    /// Turn-speed table: [normal, fast, slow] (BAM units/tic).
+    /// Values: {640, 1280, 320}.  Index 2 is used for the first SLOWTURNTICS (6)
+    /// tics; after that index 0 (or 1 with run) is used.
+    pub static mut angleturn: [c_int; 3];
+    /// Next slot in the circular body-queue ring buffer.
+    pub static mut bodyqueslot: c_int;
+    /// When true, savegame file size is capped at the vanilla limit (0x2c000).
+    pub static mut vanilla_savegame_limit: c_int;
+    /// When true, demo file size is capped at the vanilla limit.
+    pub static mut vanilla_demo_limit: c_int;
+    /// When true, all graphics are preloaded at level start.
+    pub static mut precache: c_int;
+    /// When true (set by -testcontrols), exit after the first tic.
+    pub static mut testcontrols: c_int;
+    /// Gametic at which the current level started.
+    pub static mut levelstarttic: c_int;
+    /// Total enemy count on the current level (for intermission).
+    pub static mut totalkills: c_int;
+    /// Total item count on the current level (for intermission).
+    pub static mut totalitems: c_int;
+    /// Total secret count on the current level (for intermission).
+    pub static mut totalsecret: c_int;
+}
 
 /// Version code for cph's longtics hack ("v1.91") from `doomdef.h`.
 pub const DOOM_191_VERSION: c_int = 111;

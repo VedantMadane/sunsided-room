@@ -174,9 +174,9 @@ struct CastInfo {
 // External C globals and functions
 // ---------------------------------------------------------------------------
 
-use crate::doom::g_game::{gameaction, gamestate};
-
 extern "C" {
+    static mut gameaction: c_int;
+    static mut gamestate: c_int;
     static mut viewactive: c_int;
     static mut automapactive: c_int;
     static mut gamemode: c_int;

@@ -45,21 +45,27 @@ const GS_INTERMISSION: gamestate_t = 1;
 const GS_FINALE: gamestate_t = 2;
 const GS_DEMOSCREEN: gamestate_t = 3;
 
+const ga_nothing: gameaction_t = 0;
+const ga_loadlevel: gameaction_t = 1;
+const ga_newgame: gameaction_t = 2;
+const ga_loadgame: gameaction_t = 3;
+const ga_savegame: gameaction_t = 4;
+const ga_playdemo: gameaction_t = 5;
+const ga_completed: gameaction_t = 6;
+const ga_victory: gameaction_t = 7;
+const ga_worlddone: gameaction_t = 8;
+const ga_screenshot: gameaction_t = 9;
+
+const sk_baby: skill_t = 0;
+const sk_easy: skill_t = 1;
+const sk_medium: skill_t = 2;
+const sk_hard: skill_t = 3;
+const sk_nightmare: skill_t = 4;
+const sk_noitems: skill_t = -1;
+
 const PU_STATIC: c_int = 0;
 const PU_CACHE: c_int = 8;
 
-// Re-export ga_* constants from g_game for local use
-use crate::doom::g_game::{
-    ga_completed, ga_loadgame, ga_loadlevel, ga_newgame, ga_nothing, ga_playdemo, ga_savegame,
-    ga_screenshot, ga_victory, ga_worlddone, vanilla_demo_limit, vanilla_savegame_limit,
-};
-
-// Skill constants needed locally
-const sk_medium: i32 = 2;
-
-// ---------------------------------------------------------------------------
-// Globals — these are #[no_mangle] so remaining C code (g_game.c etc.)
-// can resolve them at link time.
 // ---------------------------------------------------------------------------
 // Globals — these are #[no_mangle] so remaining C code (g_game.c etc.)
 // can resolve them at link time.
@@ -272,17 +278,32 @@ static PACKS: [PackDesc; 3] = [
     },
 ];
 
-use crate::doom::g_game::{
-    deathmatch, demoplayback, demorecording, displayplayer, gameaction, gamestate, paused,
-    singledemo, usergame, G_BeginRecording, G_CheckDemoStatus, G_DeferedPlayDemo, G_InitNew,
-    G_LoadGame, G_RecordDemo, G_Responder, G_TimeDemo, G_VanillaVersionCode,
-};
-
 // ---------------------------------------------------------------------------
-// Extern declarations for remaining C/FFI dependencies
+// Extern declarations for C code that is not yet ported (g_game.c)
 // ---------------------------------------------------------------------------
 
 extern "C" {
+    // From g_game.c (still C):
+    fn G_InitNew(skill: skill_t, episode: c_int, map: c_int);
+    fn G_DeferedPlayDemo(demo: *const c_char);
+    fn G_LoadGame(name: *mut c_char);
+    fn G_RecordDemo(name: *mut c_char);
+    fn G_BeginRecording();
+    fn G_TimeDemo(name: *mut c_char);
+    fn G_CheckDemoStatus() -> boolean;
+    fn G_Responder(ev: *mut event_t) -> boolean;
+    fn G_VanillaVersionCode() -> c_int;
+
+    // Globals from g_game.c (still C):
+    static mut gameaction: c_int;
+    static mut deathmatch: c_int;
+    static mut displayplayer: c_int;
+    static mut usergame: c_int;
+    static mut demoplayback: c_int;
+    static mut demorecording: c_int;
+    static mut singledemo: c_int;
+    static mut gamestate: c_int;
+    static mut paused: c_int;
 
     // From other ported modules (declared extern for clarity):
     static mut mouseSensitivity: c_int;
@@ -297,6 +318,8 @@ extern "C" {
     static mut screenblocks: c_int;
     static mut detailLevel: c_int;
     static mut snd_channels: c_int;
+    static mut vanilla_savegame_limit: c_int;
+    static mut vanilla_demo_limit: c_int;
     static mut setsizeneeded: c_int;
     static mut showMessages: c_int;
     static mut viewheight: c_int;

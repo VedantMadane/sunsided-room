@@ -66,8 +66,8 @@ fn main() {
         // "f_finale.c",
         // Screen wipe effect — ported to Rust (room/src/doom/f_wipe.rs)
         // "f_wipe.c",
-        // Core game logic — ported to Rust (room/src/doom/g_game.rs)
-        // "g_game.c",
+        // Core game logic
+        "g_game.c",
         // HUD text library — ported to Rust (room/src/doom/hu_lib.rs)
         // "hu_lib.c",
         // Thing info tables
