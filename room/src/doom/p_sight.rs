@@ -142,7 +142,7 @@ extern "C" {
 // Reuse the authoritative mobj_t mirror from p_telept.rs to guarantee
 // field offsets match the C layout (x=24, subsector=88, height=108).
 pub use crate::doom::p_telept::mobj_t;
-// Returns side 0 (front), 1 (back), or 2 (on).
+/// Returns side 0 (front), 1 (back), or 2 (on).
 
 fn P_DivlineSide(x: c_int, y: c_int, node: &divline_t) -> c_int {
     if node.dx == 0 {
@@ -184,7 +184,7 @@ fn P_DivlineSide(x: c_int, y: c_int, node: &divline_t) -> c_int {
     }
     1 // back side
 }
-// Returns the fractional intercept point along the first divline.
+/// Returns the fractional intercept point along the first divline.
 
 fn P_InterceptVector2(v2: &divline_t, v1: &divline_t) -> c_int {
     let den = unsafe { FixedMul(v1.dy >> 8, v2.dx) - FixedMul(v1.dx >> 8, v2.dy) };

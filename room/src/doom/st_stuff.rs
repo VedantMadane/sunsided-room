@@ -154,9 +154,9 @@ unsafe fn DEH_String(s: *mut c_char) -> *mut c_char {
     s
 }
 
-// ---------------------------------------------------------------------------
-// Replicate the C `logical_gamemission` macro from `doomstat.h`.
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Replicate the C `logical_gamemission` macro from `doomstat.h`.
+/// ---------------------------------------------------------------------------
 
 unsafe fn logical_gamemission() -> c_int {
     if gamemission == d_mode::pack_chex {
@@ -307,9 +307,9 @@ static mut st_randomnumber: c_int = 0;
 static mut st_palette: c_int = 0;
 static mut st_stopped: c_int = 1;
 
-// ---------------------------------------------------------------------------
-// Helper: format a patch name into a 9-byte buffer.
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Helper: format a patch name into a 9-byte buffer.
+/// ---------------------------------------------------------------------------
 
 unsafe fn fmt_name(buf: &mut [c_char; 9], fmt: *const c_char, arg: c_int) {
     M_snprintf_clamp(

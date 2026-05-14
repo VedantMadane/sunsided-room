@@ -995,9 +995,9 @@ pub unsafe extern "C" fn P_ChangeSector(sector: *mut sector_t, crunch: c_int) ->
     nofit
 }
 
-// ---------------------------------------------------------------------------
-// Spechit overrun emulation
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Spechit overrun emulation
+/// ---------------------------------------------------------------------------
 
 unsafe fn SpechitOverrun(ld: *mut line_t) {
     static mut baseaddr: c_uint = 0;

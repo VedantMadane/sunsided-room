@@ -209,9 +209,9 @@ pub static mut texturememory: c_int = 0;
 #[no_mangle]
 pub static mut spritememory: c_int = 0;
 
-// ---------------------------------------------------------------------------
-// R_DrawColumnInCache
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// R_DrawColumnInCache
+/// ---------------------------------------------------------------------------
 
 unsafe fn R_DrawColumnInCache(
     patch: *mut column_t,
@@ -386,9 +386,9 @@ pub unsafe extern "C" fn R_GetColumn(tex: c_int, col: c_int) -> *mut u8 {
     (*texturecomposite.add(tex as usize)).add(ofs as usize)
 }
 
-// ---------------------------------------------------------------------------
-// GenerateTextureHashTable
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// GenerateTextureHashTable
+/// ---------------------------------------------------------------------------
 
 unsafe fn GenerateTextureHashTable() {
     textures_hashtable = Z_Malloc(

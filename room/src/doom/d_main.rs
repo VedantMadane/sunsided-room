@@ -307,15 +307,15 @@ extern "C" {
     static mut inhelpscreens: c_int;
     static mut drone: c_int;
 
-    // From net_dedicated.c (stub since FEATURE_MULTIPLAYER is not defined):
+    /// From net_dedicated.c (stub since FEATURE_MULTIPLAYER is not defined):
     fn NET_DedicatedServer();
 
-    // From net_query.c (stub):
+    /// From net_query.c (stub):
     fn NET_MasterQuery();
     fn NET_QueryAddress(addr: *mut c_char);
     fn NET_LANQuery();
 
-    // C standard library:
+    /// C standard library:
     fn strlen(s: *const c_char) -> usize;
     fn strcmp(s1: *const c_char, s2: *const c_char) -> c_int;
     fn strcasecmp(s1: *const c_char, s2: *const c_char) -> c_int;
@@ -325,7 +325,7 @@ extern "C" {
     fn isspace(c: c_int) -> c_int;
     fn memmove(dest: *mut c_void, src: *const c_void, n: usize) -> *mut c_void;
 
-    // From doomgeneric C (i_timer, i_system, etc. still have some C parts):
+    /// From doomgeneric C (i_timer, i_system, etc. still have some C parts):
     fn I_GetTime() -> c_int;
     fn I_Sleep(ms: c_int);
     fn I_InitTimer();
@@ -353,12 +353,12 @@ extern "C" {
     fn I_DisplayFPSDots(dots_on: boolean);
     fn I_EnableLoadingDisk();
 
-    // From remaining C modules:
+    /// From remaining C modules:
     fn NetUpdate();
     fn TryRunTics();
     fn D_StartGameLoop();
 
-    // From ported modules (extern for clarity):
+    /// From ported modules (extern for clarity):
     fn D_FindIWAD(mask: c_int, mission: *mut c_int) -> *mut c_char;
     fn D_SaveGameIWADName(gamemission: c_int) -> *mut c_char;
     fn Z_Init();
@@ -792,9 +792,9 @@ pub extern "C" fn D_BindVariables() {
     }
 }
 
-// ---------------------------------------------------------------------------
-// D_GrabMouseCallback
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// D_GrabMouseCallback
+/// ---------------------------------------------------------------------------
 
 extern "C" fn D_GrabMouseCallback() -> boolean {
     unsafe {
@@ -1404,9 +1404,9 @@ pub extern "C" fn PrintGameVersion() {
     }
 }
 
-// ---------------------------------------------------------------------------
-// D_Endoom
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// D_Endoom
+/// ---------------------------------------------------------------------------
 
 extern "C" fn D_Endoom() {
     unsafe {

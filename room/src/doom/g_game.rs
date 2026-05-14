@@ -306,7 +306,7 @@ pub static mut secretexit: boolean = 0;
 // Private statics
 // ---------------------------------------------------------------------------
 
-// Weapon key array indices — these match the key_weapon1..8 variable indices
+/// Weapon key array indices — these match the key_weapon1..8 variable indices
 fn weapon_key_ptr(i: usize) -> *mut c_int {
     unsafe {
         match i {
@@ -568,9 +568,9 @@ pub unsafe extern "C" fn G_CmdChecksum(cmd: *mut TiccmdT) -> c_int {
     sum
 }
 
-// ---------------------------------------------------------------------------
-// WeaponSelectable
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// WeaponSelectable
+/// ---------------------------------------------------------------------------
 
 unsafe fn WeaponSelectable(weapon: weapontype_t) -> boolean {
     if weapon == wp_supershotgun && logical_gamemission() == d_mode::doom {
@@ -599,9 +599,9 @@ unsafe fn WeaponSelectable(weapon: weapontype_t) -> boolean {
     1
 }
 
-// ---------------------------------------------------------------------------
-// G_NextWeapon
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// G_NextWeapon
+/// ---------------------------------------------------------------------------
 
 unsafe fn G_NextWeapon(direction: c_int) -> c_int {
     let mut weapon: weapontype_t;
@@ -633,9 +633,9 @@ unsafe fn G_NextWeapon(direction: c_int) -> c_int {
     WEAPON_ORDER[i as usize].1 as c_int
 }
 
-// ---------------------------------------------------------------------------
-// SetJoyButtons / SetMouseButtons
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// SetJoyButtons / SetMouseButtons
+/// ---------------------------------------------------------------------------
 
 unsafe fn SetJoyButtons(buttons_mask: c_uint) {
     for i in 0..MAX_JOY_BUTTONS {
@@ -901,9 +901,9 @@ pub unsafe extern "C" fn G_BuildTiccmd(cmd: *mut TiccmdT, maketic: c_int) {
     }
 }
 
-// ---------------------------------------------------------------------------
-// G_DoLoadLevel
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// G_DoLoadLevel
+/// ---------------------------------------------------------------------------
 
 unsafe fn G_DoLoadLevel() {
     skyflatnum = R_FlatNumForName(DEH_String(b"FLOOR7_2\0".as_ptr() as *mut c_char));
@@ -1513,9 +1513,9 @@ pub unsafe extern "C" fn G_SecretExitLevel() {
     gameaction = ga_completed;
 }
 
-// ---------------------------------------------------------------------------
-// G_DoCompleted
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// G_DoCompleted
+/// ---------------------------------------------------------------------------
 
 unsafe fn G_DoCompleted() {
     gameaction = ga_nothing;

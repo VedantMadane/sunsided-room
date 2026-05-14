@@ -210,9 +210,9 @@ pub static mut sprtopscreen: fixed_t = 0;
 
 static mut vsprsortedhead: vissprite_t = unsafe { std::mem::zeroed() };
 
-// ---------------------------------------------------------------------------
-// R_InstallSpriteLump
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// R_InstallSpriteLump
+/// ---------------------------------------------------------------------------
 
 unsafe fn R_InstallSpriteLump(lump: c_int, frame: u32, rotation: u32, flipped: c_int) {
     if frame >= 29 || rotation > 8 {
@@ -280,9 +280,9 @@ unsafe fn R_InstallSpriteLump(lump: c_int, frame: u32, rotation: u32, flipped: c
     sprtemp[frame as usize].flip[rot] = flipped as u8;
 }
 
-// ---------------------------------------------------------------------------
-// R_InitSpriteDefs
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// R_InitSpriteDefs
+/// ---------------------------------------------------------------------------
 
 unsafe fn R_InitSpriteDefs(namelist: *mut *mut c_char) {
     let mut check = namelist;

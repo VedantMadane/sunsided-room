@@ -191,7 +191,7 @@ pub static mut levelTimeCount: c_int = 0;
 // ---------------------------------------------------------------------------
 
 extern "C" {
-    // Other Rust modules (declared here with c_ffi types for ABI compatibility)
+    /// Other Rust modules (declared here with c_ffi types for ABI compatibility)
     fn EV_DoDoor(line: *mut line_t, r#type: c_int) -> c_int;
     fn EV_DoFloor(line: *mut line_t, floortype: c_int) -> c_int;
     fn EV_DoCeiling(line: *mut line_t, r#type: c_int) -> c_int;
@@ -218,7 +218,7 @@ extern "C" {
     );
     fn T_MoveFloor(floor: *mut floormove_t);
 
-    // Remaining C modules
+    /// Remaining C modules
     fn G_ExitLevel();
     fn G_SecretExitLevel();
     fn W_CheckNumForName(name: *mut c_char) -> c_int;
@@ -929,9 +929,9 @@ pub unsafe extern "C" fn P_UpdateSpecials() {
     }
 }
 
-// ---------------------------------------------------------------------------
-// Donut overrun emulation
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Donut overrun emulation
+/// ---------------------------------------------------------------------------
 
 unsafe fn DonutOverrun(
     s3_floorheight: *mut c_int,

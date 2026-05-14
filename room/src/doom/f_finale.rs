@@ -204,9 +204,9 @@ extern "C" {
     fn snprintf(s: *mut c_char, n: usize, format: *const c_char, ...) -> c_int;
 }
 
-// ---------------------------------------------------------------------------
-// Local helpers
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Local helpers
+/// ---------------------------------------------------------------------------
 
 unsafe fn logical_gamemission() -> c_int {
     if gamemission == d_mode::pack_chex {
@@ -802,7 +802,7 @@ pub extern "C" fn F_CastTicker() {
     }
 }
 
-// Work-around for the goto in F_CastTicker.
+/// Work-around for the goto in F_CastTicker.
 unsafe fn goto_stopattack() {
     castattacking = 0;
     castframes = 0;

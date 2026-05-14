@@ -211,9 +211,9 @@ unsafe fn saveg_read_player_ptr(value: u32) -> *mut PlayerT {
     }
 }
 
-// ---------------------------------------------------------------------------
-// Thinker function pointer reassignment helpers
-// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/// Thinker function pointer reassignment helpers
+/// ---------------------------------------------------------------------------
 
 fn actionf_p1_move_ceiling() -> actionf_t {
     actionf_t {
@@ -296,9 +296,9 @@ fn actionf_p1_glow() -> actionf_t {
 // Struct serialization
 // ---------------------------------------------------------------------------
 
-//
-// mapthing_t
-//
+///
+/// mapthing_t
+///
 
 unsafe fn saveg_read_mapthing_t(str: *mut crate::doom::c_ffi::mapthing_t) {
     let s = &mut *str;
@@ -318,9 +318,9 @@ unsafe fn saveg_write_mapthing_t(str: *const crate::doom::c_ffi::mapthing_t) {
     saveg_write16(s.options as u16);
 }
 
-//
-// thinker_t
-//
+///
+/// thinker_t
+///
 
 unsafe fn saveg_read_thinker_t(str: *mut thinker_t) {
     let s = &mut *str;
@@ -341,9 +341,9 @@ unsafe fn saveg_write_thinker_t(str: *const thinker_t) {
     saveg_write32(s.function.acp1.map(|f| f as usize as u32).unwrap_or(0));
 }
 
-//
-// mobj_t — serialized as C struct via FFI
-//
+///
+/// mobj_t — serialized as C struct via FFI
+///
 
 unsafe fn saveg_read_mobj_t(mobj: *mut c_void) {
     let mo: *mut crate::doom::c_ffi::mobj_t = mobj as *mut crate::doom::c_ffi::mobj_t;
@@ -554,11 +554,11 @@ unsafe fn saveg_write_mobj_t(mobj: *const c_void) {
     saveg_write32((*mo).tracer as u32);
 }
 
-//
-// ticcmd_t
-//
-// Only serialize the 6 fields the C version writes. TiccmdT has extra fields.
-//
+///
+/// ticcmd_t
+///
+/// Only serialize the 6 fields the C version writes. TiccmdT has extra fields.
+///
 
 unsafe fn saveg_read_ticcmd_t(str: *mut TiccmdT) {
     let s = &mut *str;
@@ -580,9 +580,9 @@ unsafe fn saveg_write_ticcmd_t(str: *const TiccmdT) {
     saveg_write8(s.buttons);
 }
 
-//
-// pspdef_t
-//
+///
+/// pspdef_t
+///
 
 unsafe fn saveg_read_pspdef_t(str: *mut PspdefT) {
     let s = &mut *str;
@@ -605,9 +605,9 @@ unsafe fn saveg_write_pspdef_t(str: *const PspdefT) {
     saveg_write32(s.sy as u32);
 }
 
-//
-// player_t
-//
+///
+/// player_t
+///
 
 unsafe fn saveg_read_player_t(str: *mut PlayerT) {
     let s = &mut *str;
@@ -760,9 +760,9 @@ unsafe fn saveg_write_player_t(str: *const PlayerT) {
     saveg_write32(s.didsecret as u32);
 }
 
-//
-// ceiling_t
-//
+///
+/// ceiling_t
+///
 
 unsafe fn saveg_read_ceiling_t(str: *mut ceiling_t) {
     let s = &mut *str;
@@ -793,9 +793,9 @@ unsafe fn saveg_write_ceiling_t(str: *const ceiling_t) {
     saveg_write32(s.olddirection as u32);
 }
 
-//
-// vldoor_t
-//
+///
+/// vldoor_t
+///
 
 unsafe fn saveg_read_vldoor_t(str: *mut vldoor_t) {
     let s = &mut *str;
@@ -822,9 +822,9 @@ unsafe fn saveg_write_vldoor_t(str: *const vldoor_t) {
     saveg_write32(s.topcountdown as u32);
 }
 
-//
-// floormove_t
-//
+///
+/// floormove_t
+///
 
 unsafe fn saveg_read_floormove_t(str: *mut floormove_t) {
     let s = &mut *str;
@@ -853,9 +853,9 @@ unsafe fn saveg_write_floormove_t(str: *const floormove_t) {
     saveg_write32(s.speed as u32);
 }
 
-//
-// plat_t
-//
+///
+/// plat_t
+///
 
 unsafe fn saveg_read_plat_t(str: *mut plat_t) {
     let s = &mut *str;
@@ -890,9 +890,9 @@ unsafe fn saveg_write_plat_t(str: *const plat_t) {
     saveg_write_enum(s.r#type as u32);
 }
 
-//
-// lightflash_t
-//
+///
+/// lightflash_t
+///
 
 unsafe fn saveg_read_lightflash_t(str: *mut lightflash_t) {
     let s = &mut *str;
@@ -917,9 +917,9 @@ unsafe fn saveg_write_lightflash_t(str: *const lightflash_t) {
     saveg_write32(s.mintime as u32);
 }
 
-//
-// strobe_t
-//
+///
+/// strobe_t
+///
 
 unsafe fn saveg_read_strobe_t(str: *mut strobe_t) {
     let s = &mut *str;
@@ -944,9 +944,9 @@ unsafe fn saveg_write_strobe_t(str: *const strobe_t) {
     saveg_write32(s.brighttime as u32);
 }
 
-//
-// glow_t
-//
+///
+/// glow_t
+///
 
 unsafe fn saveg_read_glow_t(str: *mut glow_t) {
     let s = &mut *str;
