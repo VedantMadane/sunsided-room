@@ -84,4 +84,10 @@ extern "C" {
     ///
     /// Must be called only after [`doomgeneric_Create`] has returned.
     pub fn doomgeneric_Tick();
+
+    /// Return the C-side value of `DOOM_191_VERSION` (defined in `doomdef.h`).
+    ///
+    /// Used by integration tests to verify that a Rust-ported constant matches
+    /// the original `#define`.
+    pub fn room_test_get_doom_191_version() -> c_int;
 }

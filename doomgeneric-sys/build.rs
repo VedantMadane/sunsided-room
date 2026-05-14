@@ -226,6 +226,9 @@ fn main() {
         build.file(vendor.join(src));
     }
 
+    // Small helper that exposes #define constants to Rust tests.
+    build.file("test_helpers.c");
+
     // If all C sources have been ported to Rust, lib_sources is empty.
     // Add a dummy source file so the cc crate produces a valid (empty) library.
     if lib_sources.is_empty() {
