@@ -50,8 +50,8 @@ use crate::doom::p_map::{
     P_RadiusAttack, P_TeleportMove, P_TryMove,
 };
 use crate::doom::p_maputl::{
-    openrange, opentop, openbottom, P_AproxDistance, P_BlockThingsIterator, P_LineOpening, P_SetThingPosition,
-    P_UnsetThingPosition,
+    openbottom, openrange, opentop, P_AproxDistance, P_BlockThingsIterator, P_LineOpening,
+    P_SetThingPosition, P_UnsetThingPosition,
 };
 use crate::doom::p_mobj::{
     P_MobjThinker, P_RemoveMobj, P_SetMobjState, P_SpawnMissile, P_SpawnMobj, P_SpawnPuff,
@@ -188,9 +188,12 @@ pub unsafe extern "C" fn P_RecursiveSound(mut sec: *mut sector_t, mut soundblock
     (*sec).soundtarget = soundtarget as *mut c_void;
     let _lt_rs = crate::doom::p_tick::leveltime;
     if _lt_rs >= 2770 && _lt_rs <= 2790 {
-        let sec_idx = (sec as *const u8)
-            .offset_from(sectors as *const u8) / std::mem::size_of::<sector_t>() as isize;
-        eprintln!("RSOUND lt={} sec={} blocks={}", _lt_rs, sec_idx, soundblocks);
+        let sec_idx = (sec as *const u8).offset_from(sectors as *const u8)
+            / std::mem::size_of::<sector_t>() as isize;
+        eprintln!(
+            "RSOUND lt={} sec={} blocks={}",
+            _lt_rs, sec_idx, soundblocks
+        );
     }
     i = 0 as c_int;
     while i < (*sec).linecount {
@@ -216,12 +219,16 @@ pub unsafe extern "C" fn P_RecursiveSound(mut sec: *mut sector_t, mut soundblock
                     P_RecursiveSound(other, soundblocks);
                 }
             } else if _lt_rs >= 2770 && _lt_rs <= 2790 {
-                let sec_idx = (sec as *const u8)
-                    .offset_from(sectors as *const u8) / std::mem::size_of::<sector_t>() as isize;
-                let other_sec0 = (*sides.offset((*check).sidenum[0] as isize)).sector as *mut sector_t;
-                let other_sec1 = (*sides.offset((*check).sidenum[1] as isize)).sector as *mut sector_t;
-                let idx0 = (other_sec0 as *const u8).offset_from(sectors as *const u8) / std::mem::size_of::<sector_t>() as isize;
-                let idx1 = (other_sec1 as *const u8).offset_from(sectors as *const u8) / std::mem::size_of::<sector_t>() as isize;
+                let sec_idx = (sec as *const u8).offset_from(sectors as *const u8)
+                    / std::mem::size_of::<sector_t>() as isize;
+                let other_sec0 =
+                    (*sides.offset((*check).sidenum[0] as isize)).sector as *mut sector_t;
+                let other_sec1 =
+                    (*sides.offset((*check).sidenum[1] as isize)).sector as *mut sector_t;
+                let idx0 = (other_sec0 as *const u8).offset_from(sectors as *const u8)
+                    / std::mem::size_of::<sector_t>() as isize;
+                let idx1 = (other_sec1 as *const u8).offset_from(sectors as *const u8)
+                    / std::mem::size_of::<sector_t>() as isize;
                 eprintln!("RSOUND_STOP lt={} sec={} secs=[{},{}] openrange={} floor0={} ceil0={} floor1={} ceil1={}",
                     _lt_rs, sec_idx, idx0, idx1, openrange,
                     (*other_sec0).floorheight, (*other_sec0).ceilingheight,
@@ -238,7 +245,8 @@ pub unsafe extern "C" fn P_NoiseAlert(mut target: *mut mobj_t, mut emmiter: *mut
     let _lt_na = crate::doom::p_tick::leveltime;
     if _lt_na >= 2770 && _lt_na <= 2790 {
         let emitter_sec = (*(*emmiter).subsector).sector as *const u8;
-        let sec_idx = emitter_sec.offset_from(sectors as *const u8) / std::mem::size_of::<sector_t>() as isize;
+        let sec_idx = emitter_sec.offset_from(sectors as *const u8)
+            / std::mem::size_of::<sector_t>() as isize;
         eprintln!("NOISEALERT lt={} emitter_sec={}", _lt_na, sec_idx);
     }
     P_RecursiveSound((*(*emmiter).subsector).sector as *mut sector_t, 0 as c_int);
@@ -308,7 +316,13 @@ pub unsafe extern "C" fn P_CheckMissileRange(mut actor: *mut mobj_t) -> boolean 
     {
         let lt = crate::doom::p_tick::leveltime;
         if lt >= 2778 && lt <= 2782 {
-            eprintln!("MISSRANGE lt={} type={} addr={:p} dist={}", lt, (*actor).mobjtype, actor, dist);
+            eprintln!(
+                "MISSRANGE lt={} type={} addr={:p} dist={}",
+                lt,
+                (*actor).mobjtype,
+                actor,
+                dist
+            );
         }
     }
     if P_Random() < dist {
@@ -418,7 +432,12 @@ pub unsafe extern "C" fn P_NewChaseDir(mut actor: *mut mobj_t) {
     {
         let lt = crate::doom::p_tick::leveltime;
         if lt >= 2775 && lt <= 2785 {
-            eprintln!("NEWCHASE lt={} type={} addr={:p}", lt, (*actor).mobjtype, actor);
+            eprintln!(
+                "NEWCHASE lt={} type={} addr={:p}",
+                lt,
+                (*actor).mobjtype,
+                actor
+            );
         }
     }
     olddir = (*actor).movedir as dirtype_t;
@@ -451,7 +470,12 @@ pub unsafe extern "C" fn P_NewChaseDir(mut actor: *mut mobj_t) {
     {
         let lt = crate::doom::p_tick::leveltime;
         if lt >= 2778 && lt <= 2782 {
-            eprintln!("NEWCHASE_P1 lt={} type={} addr={:p}", lt, (*actor).mobjtype, actor);
+            eprintln!(
+                "NEWCHASE_P1 lt={} type={} addr={:p}",
+                lt,
+                (*actor).mobjtype,
+                actor
+            );
         }
     }
     if P_Random() > 200 as c_int || (deltay as c_int).abs() > (deltax as c_int).abs() {
@@ -486,7 +510,12 @@ pub unsafe extern "C" fn P_NewChaseDir(mut actor: *mut mobj_t) {
     {
         let lt = crate::doom::p_tick::leveltime;
         if lt >= 2778 && lt <= 2782 {
-            eprintln!("NEWCHASE_P2 lt={} type={} addr={:p}", lt, (*actor).mobjtype, actor);
+            eprintln!(
+                "NEWCHASE_P2 lt={} type={} addr={:p}",
+                lt,
+                (*actor).mobjtype,
+                actor
+            );
         }
     }
     if P_Random() & 1 as c_int != 0 {
@@ -537,7 +566,11 @@ pub unsafe extern "C" fn P_LookForPlayers(
     if _dbg_lfp {
         eprintln!(
             "LFP ENTER lt={} type={} addr={:p} lastlook={} stop={}",
-            _lt_lfp, (*actor).mobjtype, actor, (*actor).lastlook, stop
+            _lt_lfp,
+            (*actor).mobjtype,
+            actor,
+            (*actor).lastlook,
+            stop
         );
     }
     loop {
@@ -549,9 +582,12 @@ pub unsafe extern "C" fn P_LookForPlayers(
                     if _dbg_lfp {
                         eprintln!(
                             "LFP EXIT0 lt={} addr={:p} reason={} lastlook={} stop={} c_was={}",
-                            _lt_lfp, actor,
+                            _lt_lfp,
+                            actor,
                             if c2rust_fresh1 == 2 { "c==2" } else { "stop" },
-                            (*actor).lastlook, stop, c2rust_fresh1
+                            (*actor).lastlook,
+                            stop,
+                            c2rust_fresh1
                         );
                     }
                     return 0;
@@ -563,7 +599,11 @@ pub unsafe extern "C" fn P_LookForPlayers(
                     if _dbg_lfp {
                         eprintln!(
                             "LFP SIGHT lt={} addr={:p} player={} sight={} health={}",
-                            _lt_lfp, actor, (*actor).lastlook, sight, (*player).health
+                            _lt_lfp,
+                            actor,
+                            (*actor).lastlook,
+                            sight,
+                            (*player).health
                         );
                     }
                     if !(sight == 0) {
@@ -654,8 +694,7 @@ pub unsafe extern "C" fn A_Look(mut actor: *mut mobj_t) {
         let is_ambush = (*actor).flags & MF_AMBUSH as c_int != 0;
         let targ_shootable = !targ.is_null() && (*targ).flags & MF_SHOOTABLE as c_int != 0;
         // Log player position once per lt (use a static flag)
-        static LAST_LT_LOGGED: std::sync::atomic::AtomicI32 =
-            std::sync::atomic::AtomicI32::new(-1);
+        static LAST_LT_LOGGED: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI32::new(-1);
         if LAST_LT_LOGGED.load(std::sync::atomic::Ordering::Relaxed) != _lt_alook {
             LAST_LT_LOGGED.store(_lt_alook, std::sync::atomic::Ordering::Relaxed);
             if playeringame[0] != 0 {
@@ -695,13 +734,23 @@ pub unsafe extern "C" fn A_Look(mut actor: *mut mobj_t) {
         }
         if P_LookForPlayers(actor, 0) == 0 {
             if _lt_alook >= 2775 && _lt_alook <= 2785 {
-                eprintln!("ALOOK lt={} type={} addr={:p} → no-see", _lt_alook, (*actor).mobjtype, actor);
+                eprintln!(
+                    "ALOOK lt={} type={} addr={:p} → no-see",
+                    _lt_alook,
+                    (*actor).mobjtype,
+                    actor
+                );
             }
             return;
         }
     }
     if _lt_alook >= 2775 && _lt_alook <= 2785 {
-        eprintln!("ALOOK lt={} type={} addr={:p} → WOKE UP", _lt_alook, (*actor).mobjtype, actor);
+        eprintln!(
+            "ALOOK lt={} type={} addr={:p} → WOKE UP",
+            _lt_alook,
+            (*actor).mobjtype,
+            actor
+        );
     }
     if (*((*actor).info as *mut MobjInfo)).seesound != 0 {
         let mut sound: c_int = 0;
@@ -731,8 +780,7 @@ pub unsafe extern "C" fn A_Look(mut actor: *mut mobj_t) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
-    let trace = crate::doom::m_random::PRND_TRACE
-        .load(std::sync::atomic::Ordering::Relaxed);
+    let trace = crate::doom::m_random::PRND_TRACE.load(std::sync::atomic::Ordering::Relaxed);
     if trace {
         eprintln!(
             "A_Chase ENTER type={} addr={:p} flags=0x{:x} movecount={} reactiontime={} target={:p}",
@@ -746,7 +794,11 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
     }
     let _lt_achase = crate::doom::p_tick::leveltime;
     if _lt_achase >= 2775 && _lt_achase <= 2785 {
-        let tgt_health = if (*actor).target.is_null() { -9999 } else { (*(*actor).target).health };
+        let tgt_health = if (*actor).target.is_null() {
+            -9999
+        } else {
+            (*(*actor).target).health
+        };
         eprintln!(
             "ENTER lt={} type={} addr={:p} flags=0x{:x} movecount={} tgt={:p} tgt_health={} tgt_flags=0x{:x}",
             _lt_achase, (*actor).mobjtype, actor,
@@ -778,8 +830,21 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
         }
     }
     if (*actor).target.is_null() || (*(*actor).target).flags & MF_SHOOTABLE as c_int == 0 {
-        if trace { eprintln!("A_Chase EXIT no-target type={} addr={:p}", (*actor).mobjtype, actor); }
-        if _lt_achase >= 2775 && _lt_achase <= 2785 { eprintln!("EXIT lt={} no-target type={} addr={:p}", _lt_achase, (*actor).mobjtype, actor); }
+        if trace {
+            eprintln!(
+                "A_Chase EXIT no-target type={} addr={:p}",
+                (*actor).mobjtype,
+                actor
+            );
+        }
+        if _lt_achase >= 2775 && _lt_achase <= 2785 {
+            eprintln!(
+                "EXIT lt={} no-target type={} addr={:p}",
+                _lt_achase,
+                (*actor).mobjtype,
+                actor
+            );
+        }
         if P_LookForPlayers(actor, 1) != 0 {
             return;
         }
@@ -791,16 +856,42 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
     }
     if (*actor).flags & MF_JUSTATTACKED as c_int != 0 {
         (*actor).flags &= !(MF_JUSTATTACKED as c_int);
-        if trace { eprintln!("A_Chase EXIT justattacked type={} addr={:p}", (*actor).mobjtype, actor); }
-        if _lt_achase >= 2775 && _lt_achase <= 2785 { eprintln!("EXIT lt={} justattacked type={} addr={:p}", _lt_achase, (*actor).mobjtype, actor); }
+        if trace {
+            eprintln!(
+                "A_Chase EXIT justattacked type={} addr={:p}",
+                (*actor).mobjtype,
+                actor
+            );
+        }
+        if _lt_achase >= 2775 && _lt_achase <= 2785 {
+            eprintln!(
+                "EXIT lt={} justattacked type={} addr={:p}",
+                _lt_achase,
+                (*actor).mobjtype,
+                actor
+            );
+        }
         if gameskill as c_int != sk_nightmare as c_int && fastparm == 0 {
             P_NewChaseDir(actor);
         }
         return;
     }
     if (*((*actor).info as *mut MobjInfo)).meleestate != 0 && P_CheckMeleeRange(actor) != 0 {
-        if trace { eprintln!("A_Chase EXIT melee type={} addr={:p}", (*actor).mobjtype, actor); }
-        if _lt_achase >= 2775 && _lt_achase <= 2785 { eprintln!("EXIT lt={} melee type={} addr={:p}", _lt_achase, (*actor).mobjtype, actor); }
+        if trace {
+            eprintln!(
+                "A_Chase EXIT melee type={} addr={:p}",
+                (*actor).mobjtype,
+                actor
+            );
+        }
+        if _lt_achase >= 2775 && _lt_achase <= 2785 {
+            eprintln!(
+                "EXIT lt={} melee type={} addr={:p}",
+                _lt_achase,
+                (*actor).mobjtype,
+                actor
+            );
+        }
         if (*((*actor).info as *mut MobjInfo)).attacksound != 0 {
             S_StartSound(
                 actor as *mut c_void,
@@ -815,18 +906,45 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
     }
     if (*((*actor).info as *mut MobjInfo)).missilestate != 0 {
         if _lt_achase >= 2778 && _lt_achase <= 2782 {
-            eprintln!("MISSCHECK lt={} type={} addr={:p} movecount={} skill={} fast={}", _lt_achase, (*actor).mobjtype, actor, (*actor).movecount, gameskill, fastparm);
+            eprintln!(
+                "MISSCHECK lt={} type={} addr={:p} movecount={} skill={} fast={}",
+                _lt_achase,
+                (*actor).mobjtype,
+                actor,
+                (*actor).movecount,
+                gameskill,
+                fastparm
+            );
         }
         if !((gameskill as c_int) < sk_nightmare as c_int
             && fastparm == 0
             && (*actor).movecount != 0)
         {
             if _lt_achase >= 2778 && _lt_achase <= 2782 {
-                eprintln!("MISSRANGE_CALL lt={} type={} addr={:p}", _lt_achase, (*actor).mobjtype, actor);
+                eprintln!(
+                    "MISSRANGE_CALL lt={} type={} addr={:p}",
+                    _lt_achase,
+                    (*actor).mobjtype,
+                    actor
+                );
             }
             if !(P_CheckMissileRange(actor) == 0) {
-                if trace { eprintln!("A_Chase EXIT missile type={} addr={:p}", (*actor).mobjtype, actor); }
-                if _lt_achase >= 2775 && _lt_achase <= 2785 { eprintln!("EXIT lt={} missile type={} addr={:p} movecount={}", _lt_achase, (*actor).mobjtype, actor, (*actor).movecount); }
+                if trace {
+                    eprintln!(
+                        "A_Chase EXIT missile type={} addr={:p}",
+                        (*actor).mobjtype,
+                        actor
+                    );
+                }
+                if _lt_achase >= 2775 && _lt_achase <= 2785 {
+                    eprintln!(
+                        "EXIT lt={} missile type={} addr={:p} movecount={}",
+                        _lt_achase,
+                        (*actor).mobjtype,
+                        actor,
+                        (*actor).movecount
+                    );
+                }
                 P_SetMobjState(
                     actor,
                     (*((*actor).info as *mut MobjInfo)).missilestate as statenum_t,
@@ -838,7 +956,13 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
     }
     if netgame != 0 && (*actor).threshold == 0 && P_CheckSight(actor, (*actor).target) == 0 {
         if P_LookForPlayers(actor, 1) != 0 {
-            if trace { eprintln!("A_Chase EXIT netgame-retarget type={} addr={:p}", (*actor).mobjtype, actor); }
+            if trace {
+                eprintln!(
+                    "A_Chase EXIT netgame-retarget type={} addr={:p}",
+                    (*actor).mobjtype,
+                    actor
+                );
+            }
             return;
         }
     }
@@ -846,12 +970,23 @@ pub unsafe extern "C" fn A_Chase(mut actor: *mut mobj_t) {
     if (*actor).movecount < 0 as c_int || P_Move(actor) == 0 {
         P_NewChaseDir(actor);
     }
-    if trace { eprintln!("A_Chase activesound type={} addr={:p}", (*actor).mobjtype, actor); }
+    if trace {
+        eprintln!(
+            "A_Chase activesound type={} addr={:p}",
+            (*actor).mobjtype,
+            actor
+        );
+    }
     // Log all A_Chase completions (reached activesound) near the failing tic (lt≈2749).
     {
         let lt = crate::doom::p_tick::leveltime;
         if lt >= 2775 && lt <= 2785 {
-            eprintln!("ACHASE lt={} type={} addr={:p}", lt, (*actor).mobjtype, actor);
+            eprintln!(
+                "ACHASE lt={} type={} addr={:p}",
+                lt,
+                (*actor).mobjtype,
+                actor
+            );
         }
     }
     if (*((*actor).info as *mut MobjInfo)).activesound != 0 && P_Random() < 3 as c_int {

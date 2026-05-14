@@ -896,7 +896,9 @@ fn demo_playthrough() {
             room::doom::m_random::set_prnd_trace(enable);
             if enable {
                 eprintln!("--- tic {} (prndindex before tick) ---", tic + 1);
-                unsafe { eprintln!("  prndindex={}", prndindex); }
+                unsafe {
+                    eprintln!("  prndindex={}", prndindex);
+                }
             }
         }
 
@@ -915,7 +917,12 @@ fn demo_playthrough() {
                 current_prndindex = prndindex;
             }
             if current_prndindex != last_prndindex {
-                eprintln!("  tic {}: prndindex {} (delta {})", tic + 1, current_prndindex, current_prndindex - last_prndindex);
+                eprintln!(
+                    "  tic {}: prndindex {} (delta {})",
+                    tic + 1,
+                    current_prndindex,
+                    current_prndindex - last_prndindex
+                );
                 last_prndindex = current_prndindex;
             }
         }
@@ -959,25 +966,46 @@ fn demo_playthrough() {
                     {
                         eprintln!("  DIAGNOSTIC checkpoint {} mismatch:", checkpoint_idx + 1);
                         if snap.rndindex != expected.rndindex {
-                            eprintln!("    rndindex: got {}, expected {}", snap.rndindex, expected.rndindex);
+                            eprintln!(
+                                "    rndindex: got {}, expected {}",
+                                snap.rndindex, expected.rndindex
+                            );
                         }
                         if snap.prndindex != expected.prndindex {
-                            eprintln!("    prndindex: got {}, expected {}", snap.prndindex, expected.prndindex);
+                            eprintln!(
+                                "    prndindex: got {}, expected {}",
+                                snap.prndindex, expected.prndindex
+                            );
                         }
                         if snap.health != expected.health {
-                            eprintln!("    health: got {}, expected {}", snap.health, expected.health);
+                            eprintln!(
+                                "    health: got {}, expected {}",
+                                snap.health, expected.health
+                            );
                         }
                         if snap.armorpoints != expected.armorpoints {
-                            eprintln!("    armorpoints: got {}, expected {}", snap.armorpoints, expected.armorpoints);
+                            eprintln!(
+                                "    armorpoints: got {}, expected {}",
+                                snap.armorpoints, expected.armorpoints
+                            );
                         }
                         if snap.killcount != expected.killcount {
-                            eprintln!("    killcount: got {}, expected {}", snap.killcount, expected.killcount);
+                            eprintln!(
+                                "    killcount: got {}, expected {}",
+                                snap.killcount, expected.killcount
+                            );
                         }
                         if snap.itemcount != expected.itemcount {
-                            eprintln!("    itemcount: got {}, expected {}", snap.itemcount, expected.itemcount);
+                            eprintln!(
+                                "    itemcount: got {}, expected {}",
+                                snap.itemcount, expected.itemcount
+                            );
                         }
                         if snap.ammo != expected.ammo {
-                            eprintln!("    ammo: got {:?}, expected {:?}", snap.ammo, expected.ammo);
+                            eprintln!(
+                                "    ammo: got {:?}, expected {:?}",
+                                snap.ammo, expected.ammo
+                            );
                         }
                         if snap.mo_x != expected.mo_x {
                             eprintln!("    mo_x: got {}, expected {}", snap.mo_x, expected.mo_x);
@@ -989,7 +1017,10 @@ fn demo_playthrough() {
                             eprintln!("    mo_z: got {}, expected {}", snap.mo_z, expected.mo_z);
                         }
                         if snap.mo_angle != expected.mo_angle {
-                            eprintln!("    mo_angle: got {}, expected {}", snap.mo_angle, expected.mo_angle);
+                            eprintln!(
+                                "    mo_angle: got {}, expected {}",
+                                snap.mo_angle, expected.mo_angle
+                            );
                         }
                     }
                 }

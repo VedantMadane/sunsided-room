@@ -203,7 +203,10 @@ fn P_InterceptVector2(v2: &divline_t, v1: &divline_t) -> c_int {
 fn P_CrossSubsector(num: c_int) -> bool {
     unsafe {
         if SIGHT_DBG_LT >= 0 {
-            eprintln!("XSUB_ENTER ss={} szstart={} top={} bot={}", num, sightzstart, topslope, bottomslope);
+            eprintln!(
+                "XSUB_ENTER ss={} szstart={} top={} bot={}",
+                num, sightzstart, topslope, bottomslope
+            );
         }
         if num >= numsubsectors {
             I_Error(
@@ -262,14 +265,24 @@ fn P_CrossSubsector(num: c_int) -> bool {
             // IMPORTANT: C uses line->backsector (the original linedef side), NOT
             // seg->backsector (which is the BSP-split sub-side and may differ).
             if line.backsector.is_null() {
-                if SIGHT_DBG_LT >= 0 { eprintln!("XSUB ss={} BLOCK null_back v1=({},{}) v2=({},{})", num, v1.x, v1.y, v2.x, v2.y); }
+                if SIGHT_DBG_LT >= 0 {
+                    eprintln!(
+                        "XSUB ss={} BLOCK null_back v1=({},{}) v2=({},{})",
+                        num, v1.x, v1.y, v2.x, v2.y
+                    );
+                }
                 return false;
             }
 
             // Stop because it is not two sided anyway.
             // Also must use line->flags, not a re-read through seg->linedef.
             if line.flags & ML_TWOSIDED == 0 {
-                if SIGHT_DBG_LT >= 0 { eprintln!("XSUB ss={} BLOCK one_sided v1=({},{}) v2=({},{})", num, v1.x, v1.y, v2.x, v2.y); }
+                if SIGHT_DBG_LT >= 0 {
+                    eprintln!(
+                        "XSUB ss={} BLOCK one_sided v1=({},{}) v2=({},{})",
+                        num, v1.x, v1.y, v2.x, v2.y
+                    );
+                }
                 return false;
             }
 
@@ -301,7 +314,9 @@ fn P_CrossSubsector(num: c_int) -> bool {
 
             // Quick test for totally closed doors.
             if openbottom >= opentop {
-                if SIGHT_DBG_LT >= 0 { eprintln!("XSUB ss={} BLOCK closed_door v1=({},{}) v2=({},{}) opentop={} openbottom={}", num, v1.x, v1.y, v2.x, v2.y, opentop, openbottom); }
+                if SIGHT_DBG_LT >= 0 {
+                    eprintln!("XSUB ss={} BLOCK closed_door v1=({},{}) v2=({},{}) opentop={} openbottom={}", num, v1.x, v1.y, v2.x, v2.y, opentop, openbottom);
+                }
                 return false;
             }
 
@@ -322,7 +337,12 @@ fn P_CrossSubsector(num: c_int) -> bool {
             }
 
             if topslope <= bottomslope {
-                if SIGHT_DBG_LT >= 0 { eprintln!("XSUB ss={} BLOCK slope v1=({},{}) v2=({},{}) top={} bot={} frac={}", num, v1.x, v1.y, v2.x, v2.y, topslope, bottomslope, frac); }
+                if SIGHT_DBG_LT >= 0 {
+                    eprintln!(
+                        "XSUB ss={} BLOCK slope v1=({},{}) v2=({},{}) top={} bot={} frac={}",
+                        num, v1.x, v1.y, v2.x, v2.y, topslope, bottomslope, frac
+                    );
+                }
                 return false;
             }
         }
@@ -364,7 +384,10 @@ fn P_CrossBSPNode(bspnum: c_int) -> bool {
         // Cross the starting side.
         if !P_CrossBSPNode(bsp.children[side as usize] as c_int) {
             if SIGHT_DBG_LT >= 0 {
-                eprintln!("BSPNODE bspnum={} child[{}]={} BLOCKED", bspnum, side, bsp.children[side as usize]);
+                eprintln!(
+                    "BSPNODE bspnum={} child[{}]={} BLOCKED",
+                    bspnum, side, bsp.children[side as usize]
+                );
             }
             return false;
         }
@@ -373,9 +396,19 @@ fn P_CrossBSPNode(bspnum: c_int) -> bool {
         let bsp_div2 = node_as_divline(bsp);
         let t2_side = P_DivlineSide(t2x, t2y, &bsp_div2);
         if SIGHT_DBG_LT >= 0 && side != t2_side {
-            eprintln!("SAMESIDE_FAIL lt={} bspnum={} side={} t2_side={} t2=({},{}) part=({},{},{},{})",
-                SIGHT_DBG_LT, bspnum, side, t2_side, t2x, t2y,
-                bsp_div2.x, bsp_div2.y, bsp_div2.dx, bsp_div2.dy);
+            eprintln!(
+                "SAMESIDE_FAIL lt={} bspnum={} side={} t2_side={} t2=({},{}) part=({},{},{},{})",
+                SIGHT_DBG_LT,
+                bspnum,
+                side,
+                t2_side,
+                t2x,
+                t2y,
+                bsp_div2.x,
+                bsp_div2.y,
+                bsp_div2.dx,
+                bsp_div2.dy
+            );
         }
         if side == t2_side {
             return true;
@@ -384,7 +417,12 @@ fn P_CrossBSPNode(bspnum: c_int) -> bool {
         // Cross the ending side.
         let result2 = P_CrossBSPNode(bsp.children[(side ^ 1) as usize] as c_int);
         if SIGHT_DBG_LT >= 0 && !result2 {
-            eprintln!("BSPNODE_END bspnum={} child_end[{}]={} BLOCKED", bspnum, side ^ 1, bsp.children[(side ^ 1) as usize]);
+            eprintln!(
+                "BSPNODE_END bspnum={} child_end[{}]={} BLOCKED",
+                bspnum,
+                side ^ 1,
+                bsp.children[(side ^ 1) as usize]
+            );
         }
         result2
     }
@@ -440,7 +478,10 @@ pub extern "C" fn P_CheckSight(t1: *mut mobj_t, t2: *mut mobj_t) -> c_int {
         bottomslope = (*t2).z - sightzstart;
 
         if _dbg_sight {
-            eprintln!("SIGHT lt={} t1={:p} slopes: szstart={} top={} bot={}", _lt_sight, t1, sightzstart, topslope, bottomslope);
+            eprintln!(
+                "SIGHT lt={} t1={:p} slopes: szstart={} top={} bot={}",
+                _lt_sight, t1, sightzstart, topslope, bottomslope
+            );
         }
 
         strace.x = (*t1).x;
@@ -452,7 +493,10 @@ pub extern "C" fn P_CheckSight(t1: *mut mobj_t, t2: *mut mobj_t) -> c_int {
 
         let _bsp_result = P_CrossBSPNode(numnodes - 1) as c_int;
         if _dbg_sight {
-            eprintln!("SIGHT lt={} t1={:p} → BSP result={}", _lt_sight, t1, _bsp_result);
+            eprintln!(
+                "SIGHT lt={} t1={:p} → BSP result={}",
+                _lt_sight, t1, _bsp_result
+            );
         }
         SIGHT_DBG_LT = -1;
         _bsp_result

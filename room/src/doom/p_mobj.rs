@@ -401,20 +401,19 @@ pub unsafe extern "C" fn P_MobjThinker(mobj: *mut mobj_t) {
         let (sprite, action_fn) = if state_ptr.is_null() {
             (-1i32, 0usize)
         } else {
-            ((*state_ptr).sprite, (*state_ptr).action.map(|f| f as usize).unwrap_or(0))
+            (
+                (*state_ptr).sprite,
+                (*state_ptr).action.map(|f| f as usize).unwrap_or(0),
+            )
         };
         eprintln!(
             "P_MobjThinker type={} addr={:p} tics={} sprite={} action=0x{:x} flags=0x{:x}",
-            mobj.mobjtype,
-            mobj as *const mobj_t,
-            mobj.tics,
-            sprite,
-            action_fn,
-            mobj.flags,
+            mobj.mobjtype, mobj as *const mobj_t, mobj.tics, sprite, action_fn, mobj.flags,
         );
     }
     // Track ALL alive monsters (MF_COUNTKILL) near the failing tic (lt≈2749).
-    if mobj.flags & 0x400000 != 0 {  // MF_COUNTKILL
+    if mobj.flags & 0x400000 != 0 {
+        // MF_COUNTKILL
         let lt = leveltime;
         if lt >= 2775 && lt <= 2785 {
             let state_ptr = mobj.state as *const State;
