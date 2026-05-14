@@ -1173,7 +1173,7 @@ pub unsafe extern "C" fn G_Ticker() {
         if playeringame[i] != 0 {
             let cmd_buttons = (*players.as_mut_ptr().offset(i as isize)).cmd.buttons;
             if cmd_buttons & BT_SPECIAL != 0 {
-                match cmd_buttons & 0x7f {
+                match cmd_buttons & 3 {
                     BTS_PAUSE => {
                         paused ^= 1;
                         if paused != 0 {

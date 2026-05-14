@@ -886,11 +886,26 @@ fn demo_playthrough() {
         TOTAL_TICS
     );
     let trace_prnd = std::env::var("TRACE_PRND").is_ok();
+    let trace_sites = std::env::var("TRACE_PRND_SITES").is_ok();
     let mut last_prndindex: c_int = 0;
 
     for tic in 0..TOTAL_TICS {
+        // Enable per-call-site tracing for the specific failing tic
+        if trace_sites {
+            let enable = (tic + 1) == 2950;
+            room::doom::m_random::set_prnd_trace(enable);
+            if enable {
+                eprintln!("--- tic {} (prndindex before tick) ---", tic + 1);
+                unsafe { eprintln!("  prndindex={}", prndindex); }
+            }
+        }
+
         unsafe {
             doomgeneric_sys::doomgeneric_Tick();
+        }
+
+        if trace_sites && (tic + 1) == 2950 {
+            room::doom::m_random::set_prnd_trace(false);
         }
 
         // Tic-by-tic prndindex trace for the critical window
@@ -908,13 +923,17 @@ fn demo_playthrough() {
         if is_checkpoint(tic + 1) {
             let checkpoint_idx = snapshots.len();
             let pct = ((checkpoint_idx + 1) * 100) / CHECKPOINTS.len();
-            eprintln!(
-                "  checkpoint {}/{} ({}%) at tic {}",
-                checkpoint_idx + 1,
-                CHECKPOINTS.len(),
-                pct,
-                tic + 1,
-            );
+            unsafe {
+                eprintln!(
+                    "  checkpoint {}/{} ({}%) at tic {} gametic={} leveltime={}",
+                    checkpoint_idx + 1,
+                    CHECKPOINTS.len(),
+                    pct,
+                    tic + 1,
+                    gametic,
+                    room::doom::p_tick::leveltime,
+                );
+            }
             let snap = capture_snapshot(tic + 1);
             if !bless {
                 assert!(
