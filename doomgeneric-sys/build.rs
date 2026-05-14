@@ -226,6 +226,9 @@ fn main() {
         build.file(vendor.join(src));
     }
 
+    // Small helper that exposes #define constants to Rust tests.
+    build.file("test_helpers.c");
+
     build.compile("doomgeneric");
 
     // Link against libm for math functions used by the engine.

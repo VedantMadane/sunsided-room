@@ -83,6 +83,7 @@ extern "C" {
     static gamestate: c_int;
     static mut prndindex: c_int;
     static mut singletics: c_uint;
+    static mut longtics: c_uint;
 }
 
 // ---------------------------------------------------------------------------
@@ -380,6 +381,19 @@ fn demo_playthrough() {
     unsafe {
         doomgeneric_sys::doomgeneric_Create(argc, c_argv.as_mut_ptr());
     }
+
+    // Sanity-check invariants that future agents often re-validate when
+    // debugging random-tick divergence between C and Rust.
+    assert_eq!(
+        room::doom::c_ffi::DOOM_191_VERSION,
+        unsafe { doomgeneric_sys::room_test_get_doom_191_version() },
+        "Rust DOOM_191_VERSION must match the C #define"
+    );
+    assert_eq!(
+        unsafe { longtics },
+        0,
+        "longtics should be false when neither -longtics nor a v1.91 demo is loaded"
+    );
 
     let mut snapshots: Vec<Snapshot> = Vec::new();
 

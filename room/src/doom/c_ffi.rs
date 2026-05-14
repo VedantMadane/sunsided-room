@@ -368,6 +368,9 @@ pub struct spriteframe_t {
 // forwardmove / sidemove / angleturn are static initialisers (non-zero).
 // ---------------------------------------------------------------------------
 
+/// Version code for cph's longtics hack ("v1.91") from `doomdef.h`.
+pub const DOOM_191_VERSION: c_int = 111;
+
 extern "C" {
     /// Forward movement speed table: [slow, fast] (fixed_t, unit/tic).
     /// Values: {0x19, 0x32} = {25, 50}.
@@ -389,6 +392,8 @@ extern "C" {
     pub static mut precache: c_int;
     /// When true (set by -testcontrols), exit after the first tic.
     pub static mut testcontrols: c_int;
+    /// True when the current demo uses cph's high-resolution turning hack.
+    pub static mut longtics: c_uint;
     /// Gametic at which the current level started.
     pub static mut levelstarttic: c_int;
     /// Total enemy count on the current level (for intermission).
