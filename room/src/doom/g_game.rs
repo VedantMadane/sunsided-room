@@ -1942,11 +1942,13 @@ pub unsafe extern "C" fn G_ReadDemoTiccmd(cmd: *mut TiccmdT) {
     demo_p = demo_p.add(1);
 
     if longtics != 0 {
-        let low = *demo_p as u16;
-        demo_p = demo_p.add(1);
+        // Longtics format: first byte is high-order, second byte is low-order.
+        // Matches the C implementation: angleturn = (byte1 << 8) | byte2
         let high = *demo_p as u16;
         demo_p = demo_p.add(1);
-        (*cmd).angleturn = (low | (high << 8)) as i16;
+        let low = *demo_p as u16;
+        demo_p = demo_p.add(1);
+        (*cmd).angleturn = ((high << 8) | low) as i16;
     } else {
         (*cmd).angleturn = (*demo_p as i16) << 8;
         demo_p = demo_p.add(1);
