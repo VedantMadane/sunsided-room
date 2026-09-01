@@ -547,7 +547,7 @@ pub extern "C" fn R_ClearPlanes() {
 /// All sky flats (`picnum == skyflatnum`) share a single visplane at height 0
 /// and light level 0.
 ///
-/// Returns a null pointer if the visplane pool (128 entries) is exhausted
+/// Aborts via [`crate::i_error!`] if the visplane pool (128 entries) is exhausted
 /// (matches the C source `I_Error` path).
 ///
 /// Exported as `#[no_mangle]` for C callers.
